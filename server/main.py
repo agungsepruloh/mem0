@@ -124,6 +124,17 @@ llm_config = {"api_key": OPENAI_API_KEY, "temperature": 0.2, "model": DEFAULT_LL
 if DEFAULT_LLM_BASE_URL:
     llm_config["openai_base_url"] = DEFAULT_LLM_BASE_URL
 
+vector_store_config = {
+    "host": POSTGRES_HOST,
+    "port": int(POSTGRES_PORT),
+    "dbname": POSTGRES_DB,
+    "user": POSTGRES_USER,
+    "password": POSTGRES_PASSWORD,
+    "collection_name": POSTGRES_COLLECTION_NAME,
+}
+if DEFAULT_EMBEDDER_DIMS:
+    vector_store_config["embedding_model_dims"] = int(DEFAULT_EMBEDDER_DIMS)
+
 embedder_config = {"model": DEFAULT_EMBEDDER_MODEL}
 if DEFAULT_EMBEDDER_PROVIDER == "openai":
     embedder_config["api_key"] = OPENAI_API_KEY
@@ -139,14 +150,7 @@ DEFAULT_CONFIG = {
     "version": "v1.1",
     "vector_store": {
         "provider": "pgvector",
-        "config": {
-            "host": POSTGRES_HOST,
-            "port": int(POSTGRES_PORT),
-            "dbname": POSTGRES_DB,
-            "user": POSTGRES_USER,
-            "password": POSTGRES_PASSWORD,
-            "collection_name": POSTGRES_COLLECTION_NAME,
-        },
+        "config": vector_store_config,
     },
     "llm": {
         "provider": DEFAULT_LLM_PROVIDER,

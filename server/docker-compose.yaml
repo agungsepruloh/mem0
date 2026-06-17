@@ -29,6 +29,28 @@ services:
       - AUTH_DISABLED=${AUTH_DISABLED:-false}
       - MEM0_TELEMETRY=${MEM0_TELEMETRY:-true}
 
+  mem0-mcp:
+    image: python:3.12
+    working_dir: /app
+    ports:
+      - "8766:8766"
+    env_file:
+      - .env
+    networks:
+      - mem0_network
+    volumes:
+      - .:/app
+    depends_on:
+      mem0:
+        condition: service_started
+    command: >
+      sh -c "pip install -q fastapi==0.115.8 uvicorn==0.34.0 'httpx>=0.27,<1.0' python-dotenv==1.0.1 'mcp[cli]>=1.25.4' && uvicorn mcp_adapter:app --host 0.0.0.0 --port 8766 --reload"
+    environment:
+      - PYTHONDONTWRITEBYTECODE=1
+      - PYTHONUNBUFFERED=1
+      - PYTHONPATH=
+      - MEM0_API_URL=http://mem0:8000
+
   postgres:
       image: pgvector/pgvector:pg17
       restart: on-failure
