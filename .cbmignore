@@ -1,0 +1,39 @@
+# Secrets and local config
+.git/
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+server/.env
+openmemory/.env
+openmemory/api/.env
+openmemory/ui/.env
+
+# Dependencies and generated artifacts
+**/node_modules/
+**/__pycache__/
+**/.pytest_cache/
+**/.mypy_cache/
+**/.ruff_cache/
+**/.next/
+**/dist/
+**/build/
+**/*.egg-info/
+
+# Runtime data and vector/database storage
+server/history/
+qdrant_storage/
+openmemory/qdrant_storage/
+openmemory/**/qdrant_storage/
+openmemory/**/chroma/
+openmemory/**/milvus/
+*.db
+*.sqlite
+*.sqlite3
+
+# Logs and OS/editor noise
+*.log
+.DS_Store
+.idea/
+.vscode/

@@ -58,7 +58,7 @@ SKIPPED_REQUEST_LOG_PATHS = {"/api/health", "/docs", "/redoc", "/openapi.json"}
 SKIPPED_REQUEST_LOG_PREFIXES = ("/requests",)
 
 BUNDLED_LLM_PROVIDERS = ("openai", "anthropic", "gemini")
-BUNDLED_EMBEDDER_PROVIDERS = ("openai", "gemini")
+BUNDLED_EMBEDDER_PROVIDERS = ("openai", "gemini", "ollama")
 
 
 def _warn_if_unconfigured() -> None:
@@ -112,8 +112,28 @@ POSTGRES_COLLECTION_NAME = os.environ.get("POSTGRES_COLLECTION_NAME", "memories"
 
 OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
 HISTORY_DB_PATH = os.environ.get("HISTORY_DB_PATH", "/app/history/history.db")
+DEFAULT_LLM_PROVIDER = os.environ.get("MEM0_LLM_PROVIDER", "openai")
 DEFAULT_LLM_MODEL = os.environ.get("MEM0_DEFAULT_LLM_MODEL", "gpt-4.1-nano-2025-04-14")
+DEFAULT_LLM_BASE_URL = os.environ.get("MEM0_LLM_BASE_URL") or os.environ.get("LLM_BASE_URL") or os.environ.get("OPENAI_BASE_URL")
+DEFAULT_EMBEDDER_PROVIDER = os.environ.get("MEM0_EMBEDDER_PROVIDER", "openai")
 DEFAULT_EMBEDDER_MODEL = os.environ.get("MEM0_DEFAULT_EMBEDDER_MODEL", "text-embedding-3-small")
+DEFAULT_EMBEDDER_BASE_URL = os.environ.get("MEM0_EMBEDDER_BASE_URL") or os.environ.get("OLLAMA_BASE_URL")
+DEFAULT_EMBEDDER_DIMS = os.environ.get("MEM0_EMBEDDER_DIMS") or os.environ.get("EMBEDDING_MODEL_DIMS")
+
+llm_config = {"api_key": OPENAI_API_KEY, "temperature": 0.2, "model": DEFAULT_LLM_MODEL}
+if DEFAULT_LLM_BASE_URL:
+    llm_config["openai_base_url"] = DEFAULT_LLM_BASE_URL
+
+embedder_config = {"model": DEFAULT_EMBEDDER_MODEL}
+if DEFAULT_EMBEDDER_PROVIDER == "openai":
+    embedder_config["api_key"] = OPENAI_API_KEY
+    if DEFAULT_EMBEDDER_BASE_URL:
+        embedder_config["openai_base_url"] = DEFAULT_EMBEDDER_BASE_URL
+elif DEFAULT_EMBEDDER_PROVIDER == "ollama":
+    if DEFAULT_EMBEDDER_BASE_URL:
+        embedder_config["ollama_base_url"] = DEFAULT_EMBEDDER_BASE_URL
+    if DEFAULT_EMBEDDER_DIMS:
+        embedder_config["embedding_dims"] = int(DEFAULT_EMBEDDER_DIMS)
 
 DEFAULT_CONFIG = {
     "version": "v1.1",
@@ -129,10 +149,10 @@ DEFAULT_CONFIG = {
         },
     },
     "llm": {
-        "provider": "openai",
-        "config": {"api_key": OPENAI_API_KEY, "temperature": 0.2, "model": DEFAULT_LLM_MODEL},
+        "provider": DEFAULT_LLM_PROVIDER,
+        "config": llm_config,
     },
-    "embedder": {"provider": "openai", "config": {"api_key": OPENAI_API_KEY, "model": DEFAULT_EMBEDDER_MODEL}},
+    "embedder": {"provider": DEFAULT_EMBEDDER_PROVIDER, "config": embedder_config},
     "history_db_path": HISTORY_DB_PATH,
 }
 

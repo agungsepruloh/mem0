@@ -23,7 +23,7 @@ services:
       - PYTHONDONTWRITEBYTECODE=1
       - PYTHONUNBUFFERED=1
       - PYTHONPATH=
-      - DASHBOARD_URL=http://localhost:3000
+      - DASHBOARD_URL=${DASHBOARD_URL:-http://localhost:3001}
       - APP_DB_NAME=mem0_app
       - JWT_SECRET=${JWT_SECRET}
       - AUTH_DISABLED=${AUTH_DISABLED:-false}
@@ -52,7 +52,7 @@ services:
   mem0-dashboard:
     build: ./dashboard
     ports:
-      - "3000:3000"
+      - "3001:3000"
     networks:
       - mem0_network
     environment:
@@ -63,7 +63,7 @@ services:
       mem0:
         condition: service_started
     healthcheck:
-      test: ["CMD", "wget", "-qO-", "http://localhost:3000/api/health"]
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:3000/api/health"]
       interval: 10s
       timeout: 5s
       retries: 3
