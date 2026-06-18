@@ -70,7 +70,7 @@ def _build_memory_metadata(
     project_name: str | None,
 ) -> dict[str, Any]:
     metadata: dict[str, Any] = {
-        "source_app": "openmemory",
+        "source_app": "mem0",
         "mcp_client": client_name,
     }
     normalized_scope = _normalize_scope(scope)
